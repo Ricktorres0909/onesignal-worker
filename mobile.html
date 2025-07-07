@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<script>
+    /**
+     * Formata string ISO YYYY-MM-DD para data local pt-BR
+     */
+    function formatLocalDate(isoDate) {
+      const [y, m, d] = isoDate.split('-');
+      return new Date(+y, +m - 1, +d).toLocaleDateString('pt-BR');
+    }
+
+        const nomePadronizado = {
+            'Operador de Áudio': 'Operador de Som',
+            'Ajudante do Operador': 'Ajudante do Operador',
+            'Indicador 1': 'Indicador',
+            'Indicador 2': 'Indicador',
+            'Microfone 1': 'Microfone',
+            'Microfone 2': 'Microfone',
+            'Leitor Estudo Bíblico': 'Leitor Estudo Bíblico',
+            'Leitor Sentinela': 'Leitor Sentinela'
+        };
+    </script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Designações - Congregação Jardim Veredas</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta content="#4f46e5" name="theme-color"/>
+<link href="/manifest.json" rel="manifest"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+        }
+
+        .dark-mode .bg-white dark:bg-gray-800 {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+            color: #f1f5f9;
+        }
+
+        .dark-mode .text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 {
+            color: #cbd5e1 !important;
+        }
+
+        .dark-mode .text-gray-700 dark:text-gray-200 dark:text-gray-100 {
+            color: #e2e8f0 !important;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #3b82f6 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .notification-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #9333ea 100%);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(79, 70, 229, 0.1);
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-ausencia-scroll {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .modal-ausencia-scroll {
+            max-height: 90vh;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+
+        .modal-ausencia .grid.grid-cols-2 {
+            gap: 0.5rem;
+        }
+
+        .motivo-card {
+            padding: 8px !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .motivos-escolha.hidden {
+            display: none !important;
+        }
+
+        .designation-card {
+            border-radius: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(79, 70, 229, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .designation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed, #3b82f6);
+        }
+
+        .designation-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .date-badge {
+            font-size: 1rem !important;
+            font-weight: 700;
+            padding: 0.75rem 1.25rem;
+            border-radius: 2rem;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: #4338ca;
+            box-shadow: 0 4px 15px rgba(67, 56, 202, 0.2);
+        }
+
+        .day-badge-quinta {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .day-badge-domingo {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.5);
+        }
+
+        .day-badge {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-details {
+            background: linear-gradient(145deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%) !important;
+            border: 1px solid #3b82f6 !important;
+            color: #1e40af !important;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            max-width: 130px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-details::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-details:hover::before {
+            left: 100%;
+        }
+
+        .btn-details:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-absence {
+            background: linear-gradient(145deg, #fef3c7 0%, #fcd34d 50%, #f59e0b 100%) !important;
+            border: 1px solid #d97706 !important;
+            color: #92400e !important;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            max-width: 130px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-absence::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-absence:hover::before {
+            left: 100%;
+        }
+
+        .btn-absence:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
+        }
+
+        .brother-name {
+            font-size: 1.375rem !important;
+            font-weight: 700 !important;
+            color: #374151;
+        }
+
+        .function-name {
+            font-size: 1.3rem !important;
+            font-weight: 700 !important;
+            color: #1f2937;
+        }
+
+        .header-title {
+            font-size: 2.25rem !important;
+            font-weight: 900 !important;
+            line-height: 1.1;
+            letter-spacing: 0.025em;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, #ffffff, #f1f5f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem !important;
+            font-weight: 600 !important;
+            opacity: 0.95;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 0.5rem;
+        }
+
+        .header-version {
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+            opacity: 0.85;
+            font-style: italic;
+            margin-top: 0.25rem;
+        }
+
+        .month-title {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #4f46e5;
+            text-transform: capitalize;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .month-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 2px;
+        }
+
+        .button-split {
+            flex: 1 1 50%;
+            padding: 0.75rem 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        select, input {
+            transition: all 0.3s ease;
+            border-radius: 1rem;
+        }
+
+        select:focus, input:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .bg-white dark:bg-gray-800 {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(79, 70, 229, 0.05);
+        }
+
+        .rounded-lg {
+            border-radius: 1.25rem;
+        }
+
+        .shadow-md {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .absence-template {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 1rem;
+        }
+
+        .absence-template:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        #connectionStatus {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 4px solid #3b82f6;
+            border-radius: 0 1rem 1rem 0;
+        }
+
+        .notification-toggle-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: all 0.3s ease;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .notification-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .inactive-notifications {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%) !important;
+        }
+
+        /* Animações de entrada */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Melhorias nos modais */
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #3730a3, #5b21b6);
+        }
+    </style>
+<script async="" src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"></script></head>
+<body class="bg-gray-50 font-sans">
+<!-- Botão de alternância de modo escuro -->
+<button class="fixed top-4 right-4 z-50 text-white bg-gray-700 bg-opacity-70 hover:bg-opacity-100 transition-colors p-2 rounded-full shadow-lg" id="darkModeToggle">
+<i class="fas fa-moon"></i>
+</button>
+<!-- Header -->
+<header class="titulo-box">
+<div class="titulo-principal">DESIGNAÇÕES</div>
+<div class="titulo-congregacao">Congregação Jardim Veredas</div>
+<div class="titulo-versao">📱 Versão Mobile V. 3.0</div>
+</header>
+<style>
+  .titulo-box {
+    background: linear-gradient(270deg, #0ea5e9, #3b82f6, #6366f1, #7c3aed, #06b6d4, #3f51b5, #60a5fa);
+    background-size: 1400% 1400%;
+    padding: 30px 10px;
+    text-align: center;
+    animation: fundoGradiente 12s ease infinite;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  @keyframes fundoGradiente {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+  .titulo-principal {
+    font-size: 28px;
+    font-weight: 900;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 6px;
+  }
+  .titulo-congregacao {
+    font-size: 16px;
+    color: #e0f7fa;
+    margin-bottom: 4px;
+  }
+  .titulo-versao {
+    font-size: 13px;
+    color: #cfd8dc;
+    font-style: italic;
+  }
+  .emoji-aceno {
+    display: inline-block;
+    animation: aceno 1.8s infinite ease-in-out;
+    transform-origin: 70% 70%;
+    margin-right: 5px;
+  }
+  @keyframes aceno {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(20deg); }
+    30% { transform: rotate(-15deg); }
+    45% { transform: rotate(10deg); }
+    60% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+    100% { transform: rotate(0deg); }
+  }
+</style>
+<!-- Connection Status -->
+<div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 hidden" id="connectionStatus">
+<div class="flex items-center">
+<div class="loading-spinner mr-3"></div>
+<p class="font-medium">Conectando ao Supabase...</p>
+</div>
+</div>
+<div class="container mx-auto px-5 py-6 max-w-md">
+<!-- User Selection -->
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 fade-in-up" id="userSelection">
+<h2 class="text-sm text-center text-base mt-2 text-xl font-semibold text-gray-800 dark:text-white dark:text-white mb-4">Olá irmão! <span class="emoji-aceno">👋</span></h2>
+<p class="text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 mb-4 text-center">Selecione seu nome para ver suas designações</p>
+<select class="w-full p-4 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 dark:text-gray-200 dark:text-gray-100" id="brotherSelect">
+<option value="">Carregando irmãos...</option>
+</select>
+<div class="mt-4 space-y-2">
+<button class="w-full btn-primary text-white py-3 px-4 rounded-lg font-medium transition-all" id="viewAllButton">
+<i class="fas fa-users mr-2"></i>Ver Todas as Designações
+                </button>
+<button class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-all mt-2" id="addCalendarButton">
+📆 Adicionar todas à Agenda
+</button>
+</div>
+</div>
+<!-- Month Filter -->
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 mb-6 hidden fade-in-up" id="monthFilter">
+<h3 class="font-semibold mb-3 text-gray-800 dark:text-white dark:text-white">📅 Filtrar por Mês</h3>
+<select class="w-full p-4 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 dark:text-gray-200 dark:text-gray-100" id="monthSelect">
+<option value="">Todos os Meses</option>
+</select>
+<div class="mt-4">
+<h3 class="font-semibold mb-2 text-gray-800 dark:text-white dark:text-white">↔️ Filtrar por Função</h3>
+<select class="w-full p-4 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-700 dark:text-gray-200 dark:text-gray-100" id="functionSelect">
+<option value="">Todas as Funções</option>
+</select>
+</div>
+</div>
+<!-- Notifications Section -->
+<div class="notification-card text-white rounded-lg shadow-md p-6 mb-6 fade-in-up">
+<h2 class="text-xl font-semibold mb-4">🔔 Notificações Inteligentes</h2>
+<div class="flex flex-col gap-3">
+<button class="w-full notification-toggle-btn inactive-notifications text-white py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2" id="toggleNotifications">
+<i class="fas fa-bell-slash"></i> Notificações Inativas
+                </button>
+<label class="hidden">
+<input class="sr-only" id="notificationToggle" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+<!-- Statistics -->
+<div class="grid grid-cols-3 gap-4 mb-6 px-5 max-w-md mx-auto">
+<div class="stats-card rounded-lg p-4 text-center">
+<div class="text-2xl font-bold text-blue-600" id="totalDesignations">0</div>
+<div class="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 font-medium">Total</div>
+</div>
+<div class="stats-card rounded-lg p-4 text-center">
+<div class="text-2xl font-bold text-green-600" id="thisMonth">0</div>
+<div class="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 font-medium">Este Mês</div>
+</div>
+<div class="stats-card rounded-lg p-4 text-center">
+<div class="text-2xl font-bold text-purple-600" id="nextWeek">0</div>
+<div class="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 font-medium">Próximos 7 Dias</div>
+</div>
+</div>
+<!-- Designations List -->
+<div class="space-y-6 px-5 max-w-md mx-auto" id="designationsList">
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+<div class="text-center">
+<div class="loading-spinner mx-auto mb-4"></div>
+<p class="text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 font-medium">Carregando suas designações...</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-300 dark:text-gray-200 mt-2">Preparando dados locais</p>
+</div>
+</div>
+</div>
+<!-- Empty State -->
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center hidden mx-5 max-w-md mx-auto" id="emptyState">
+<i class="fas fa-calendar-times text-5xl text-gray-400 mb-4"></i>
+<h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 dark:text-gray-100 mb-2">Nenhuma designação encontrada</h3>
+<p class="text-gray-500 dark:text-gray-400 dark:text-gray-300 dark:text-gray-200">Selecione um irmão ou verifique o filtro de mês</p>
+</div>
+<!-- Details Modal -->
+<div class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop flex items-center justify-center p-4 hidden z-50 overflow-y-auto max-h-[80vh]" id="detailsModal">
+<div class="modal-content max-w-md w-full max-h-[70vh] overflow-y-auto" style="max-height: 70vh; overflow-y: auto;">
+<div class="p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-xl font-semibold flex items-center text-gray-800 dark:text-white dark:text-white" id="modalTitle">
+<span class="text-3xl mr-3" id="modalIcon"></span>
+<span id="modalFunctionName"></span>
+</h3>
+<button class="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 transition-colors p-2" id="closeModal">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<div class="space-y-6" id="modalContent">
+<!-- Content will be populated by JavaScript -->
+</div>
+<div class="mt-8 text-right">
+<button class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 dark:text-white dark:text-white py-2 px-4 rounded-lg transition-all font-medium" id="bottomCloseModal">
+<i class="fas fa-times mr-1"></i>Fechar
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Absence Modal -->
+<div class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop flex items-center justify-center p-4 hidden z-50" id="absenceModal">
+<div class="modal-content max-w-md w-full text-black" style="max-height: 90vh; overflow-y: auto;">
+<div class="p-6 text-black">
+<div class="flex justify-between items-center mb-6 text-black">
+<h3 class="text-xl font-semibold flex items-center text-black">
+<i class="fab fa-whatsapp text-green-500 mr-3 text-2xl"></i>
+                        Personalizar Mensagem
+                    </h3>
+<button class="text-black hover:text-gray-600 transition-colors p-2" id="closeAbsenceModal">
+<i class="fas fa-times text-xl"></i>
+</button>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-1 gap-4 mb-6 motivos-escolha text-black">
+<button class="absence-template border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 text-center hover:border-blue-500 hover:bg-blue-50" data-type="padrao">
+<div class="text-3xl mb-2">📄</div>
+<div class="font-medium text-black">Padrão</div>
+<div class="text-xs text-black">Ausência</div>
+</button>
+<button class="absence-template border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 text-center hover:border-red-500 hover:bg-red-50" data-type="emergencia">
+<div class="text-3xl mb-2">🚨</div>
+<div class="font-medium text-black">Emergência</div>
+<div class="text-xs text-black">Situação urgente</div>
+</button>
+<button class="absence-template border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 text-center hover:border-yellow-500 hover:bg-yellow-50" data-type="doenca">
+<div class="text-3xl mb-2">😷</div>
+<div class="font-medium text-black">Doença</div>
+<div class="text-xs text-black">Problema de saúde</div>
+</button>
+<button class="absence-template border-2 border-blue-200 rounded-lg p-4 text-center hover:border-blue-500 hover:bg-blue-50" data-type="viagem">
+<div class="text-3xl mb-2">✈️</div>
+<div class="font-medium text-black">Viagem</div>
+<div class="text-xs text-black">Estarei ausente</div>
+</button>
+</div>
+<button class="absence-template w-full border-2 border-gray-200 dark:border-gray-600 rounded-lg p-4 text-center hover:border-purple-500 hover:bg-purple-50 mb-6" data-type="personalizada">
+<div class="text-3xl mb-2">✏️</div>
+<div class="font-medium text-black">Personalizada</div>
+<div class="text-xs text-black">Criar própria</div>
+</button>
+<div class="hidden mb-4 text-black" id="trocarMotivoWrapper">
+<button class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 text-black hover:bg-gray-100 py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2" id="trocarMotivo">
+                        🔄 Trocar motivo
+                    </button>
+</div>
+<div class="mb-6 text-black">
+<label class="block text-sm font-medium text-black mb-3">Pré-visualização:</label>
+<div class="text-black" id="messagePreview" style="white-space:pre-wrap; background: linear-gradient(135deg, #f0fff4 0%, #ecfdf5 100%); border: 1px solid #a7f3d0; border-radius: 1rem; padding: 1.25rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                        Selecione um modelo acima
+                    </div>
+</div>
+<div class="mb-6 text-black">
+<label class="block text-sm font-medium text-black mb-3">Editar mensagem:</label>
+<textarea class="w-full p-4 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" id="customMessage" placeholder="Digite ou edite sua mensagem aqui..." rows="4"></textarea>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 text-black">
+<button class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg font-medium transition-all" id="sendWhatsApp">
+<i class="fab fa-whatsapp mr-2 text-black"></i>Enviar WhatsApp
+                    </button>
+<button class="px-6 py-3 border border-gray-300 dark:border-gray-500 rounded-lg font-medium hover:bg-gray-50 transition-all text-black" id="cancelAbsence">
+                        Cancelar
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+        let currentFunction = '';
+        
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://kuypzuyyolklxbimvjhr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt1eXB6dXl5b2xrbHhiaW12amhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3NDI0MTIsImV4cCI6MjA2MzMxODQxMn0.xEwo7UtTZWJYkxnuDakOJQflQnywLDWG7WXIEUDUwGU';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Global Variables
+        let brothers = [];
+        let designations = [];
+        let currentBrotherId = null;
+        let currentMonth = '';
+        let showingAll = false;
+        let currentDesignationForAbsence = null;
+
+        // Function Icons Mapping
+        const functionIcons = {
+            'Indicador': '🧭',
+            'Indicador 1': '🧭',
+            'Indicador 2': '🧭',
+            'Microfone': '🎤',
+            'Microfone 1': '🎤',
+            'Microfone 2': '🎤',
+            'Operador de Audio': '🎚️',
+            'Operador de Áudio': '🎚️',
+            'Operador de Som': '🎚️',
+            'Ajudante do Operador': '🎧',
+            'Limpeza': '🧹',
+            'Jardinagem': '🪴',
+            'Literatura': '📘',
+            'Leitor Estudo Bíblico': '📖',
+            'default': '📋'
+        };
+
+        // Message Templates
+        const messageTemplates = {
+            padrao: {
+                icon: '📄',
+                text: 'Olá! 😊\n\nNão conseguirei comparecer na função *{funcao}* do dia *{data}*.\n\nPodem providenciar alguém para me substituir por favor?\n\nObrigado! 🙏'
+            },
+            emergencia: {
+                icon: '🚨',
+                text: 'Olá! 🚨\n\nTive uma emergência e não conseguirei comparecer na função *{funcao}* do dia *{data}*.\n\nPeço desculpas pelo inconveniente e agradeço se puderem me substituir com urgência.\n\nMuito obrigado! 🙏'
+            },
+            doenca: {
+                icon: '😷',
+                text: 'Olá! 😷\n\nNão estou me sentindo bem e não conseguirei comparecer na função *{funcao}* do dia *{data}*.\n\nPeço desculpas e agradeço se puderem me substituir.\n\nObrigado pela compreensão! 🙏'
+            },
+            viagem: {
+                icon: '✈️',
+                text: 'Olá! ✈️\n\nEstarei viajando e não conseguirei comparecer na função *{funcao}* do dia *{data}*.\n\nPodem providenciar alguém para me substituir por favor?\n\nObrigado! 🙏'
+            }
+        };
+
+        // Function Details
+        const functionDetails = {
+            'Indicador': {
+                icon: '🧍',
+                sections: [
+                    {
+                        title: '🕐 Antes (30 min antes)',
+                        items: [
+                            'Chegar com antecedência para abrir o salão e garagem',
+                            'Ligar as luzes e, se necessário, o ar-condicionado',
+                            'Verificar papel nos banheiros e copos no bebedouro',
+                            'Receber e ajudar os irmãos que chegarem, orientando-os'
+                        ]
+                    },
+                    {
+                        title: '⏱️ Durante',
+                        items: [
+                            'Manter o salão organizado, orientar fluxo de pessoas (entradas/saídas)',
+                            'Observar necessidade de ajustar luzes ou ventilação',
+                            'Ajudar a manter o bom funcionamento e a segurança de todos'
+                        ]
+                    },
+                    {
+                        title: '✅ Depois',
+                        items: [
+                            'Desligar o ar-condicionado, luzes e fechar a garagem',
+                            'Fechar portas e garantir que o salão fique seguro'
+                        ]
+                    }
+                ]
+            },
+            'Leitor Estudo Bíblico': {
+                icon: '📘',
+                sections: [
+                    {
+                        title: '📘 Orientações para Leitura Pública',
+                        items: [
+                            'Fique atento às orientações do dirigente.',
+                            'Seja claro na pronúncia, especialmente de nomes bíblicos.',
+                            'Faça pausas adequadas para permitir que a congregação acompanhe.',
+                            'Leia com calma e expressividade, destacando o pensamento principal.',
+                            'Respeite a pontuação e pratique antes da reunião.',
+                            'Se possível, escute a leitura no jw.org para compreender e ficar mais familiarizado ainda com a matéria.'
+                        ]
+                    },
+                    {
+                        title: '📖 Textos de Apoio',
+                        items: [
+                            '1 Timóteo 4:13 — "Continue a dedicar-se à leitura pública das Escrituras..."',
+                            'Livro ks, cap. 12, parágrafos 19 a 22 — Orientações sobre leitura clara e respeitosa.'
+                        ]
+                    }
+                ]
+            },
+            'Leitor de Sentinela': {
+                icon: '📘',
+                sections: [
+                    {
+                        title: '📘 Orientações para Leitura Pública',
+                        items: [
+                            'Fique atento às orientações do dirigente.',
+                            'Seja claro na pronúncia, especialmente de nomes bíblicos.',
+                            'Faça pausas adequadas para permitir que a congregação acompanhe.',
+                            'Leia com calma e expressividade, destacando o pensamento principal.',
+                            'Respeite a pontuação e pratique antes da reunião.',
+                            'Se possível, escute a leitura no jw.org para compreender e ficar mais familiarizado ainda com a matéria.'
+                        ]
+                    },
+                    {
+                        title: '📖 Textos de Apoio',
+                        items: [
+                            '1 Timóteo 4:13 — "Continue a dedicar-se à leitura pública das Escrituras..."',
+                            'Livro ks, cap. 12, parágrafos 19 a 22 — Orientações sobre leitura clara e respeitosa.'
+                        ]
+                    }
+                ]
+            },
+            'Microfone': {
+                icon: '🎤',
+                sections: [
+                    {
+                        title: '🕐 Antes',
+                        items: [
+                            'Chegar cedo para auxiliar o operador de som na montagem do microfone',
+                            'Testar o microfone para garantir volume e clareza'
+                        ]
+                    },
+                    {
+                        title: '⏱️ Durante',
+                        items: [
+                            'Ficar atento ao levantar de mãos dos irmãos, passando o microfone com rapidez e cuidado',
+                            'Manter distância segura dos irmãos para evitar tropeços e esbarrões'
+                        ]
+                    },
+                    {
+                        title: '✅ Depois',
+                        items: [
+                            'Ajudar a desmontar e guardar o microfone com cuidado',
+                            'Organizar cabos e estojo de transporte'
+                        ]
+                    }
+                ]
+            },
+            'Operador de Som': {
+                icon: '🎧',
+                sections: [
+                    {
+                        title: '🕐 Antes',
+                        items: [
+                            'Chegar com tempo suficiente para ligar todo o equipamento',
+                            'Ligar primeiro o JW Library e só depois conectar o Zoom',
+                            'Testar volumes de microfone e áudio do computador'
+                        ]
+                    },
+                    {
+                        title: '⏱️ Durante',
+                        items: [
+                            'Monitorar constantemente o som, ajustar volume conforme necessidade',
+                            'Ficar alerta a qualquer falha (chiados, microfonia)'
+                        ]
+                    },
+                    {
+                        title: '✅ Depois',
+                        items: [
+                            'Desligar todos os aparelhos (mesa de som, computador, caixas)',
+                            'Fechar a sala de controle e trancar a porta'
+                        ]
+                    },
+                    {
+                        title: '⚠️ Importante',
+                        items: [
+                            'Se não puder comparecer, avisar o ajudante com antecedência'
+                        ]
+                    }
+                ]
+            },
+            'Ajudante do Operador': {
+                icon: '🔧',
+                sections: [
+                    {
+                        title: '🕐 Antes',
+                        items: [
+                            'Auxiliar na montagem inicial, posicionar cabos e acessórios'
+                        ]
+                    },
+                    {
+                        title: '⏱️ Durante',
+                        items: [
+                            'Ficar de prontidão para substituir o operador em caso de imprevistos',
+                            'Cobrir pausas do operador durante a reunião (banheiro, água, etc.)'
+                        ]
+                    },
+                    {
+                        title: '✅ Depois',
+                        items: [
+                            'Ajudar a desmontar o equipamento restante',
+                            'Conferir se todas as peças foram guardadas corretamente'
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // Initialize App
+        
+// Ativar modo escuro automaticamente com base na preferência do sistema
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (!localStorage.getItem('darkMode')) {
+        document.body.classList.add('dark-mode');
+        localStorage.setItem('darkMode', 'enabled');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            loadSavedSettings();
+        });
+
+        async function initializeApp() {
+            showConnectionStatus();
+            try {
+                await loadBrothers();
+                await loadDesignations();
+                hideConnectionStatus();
+                updateStats();
+                populateMonthFilter();
+                populateFunctionFilter();
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                hideConnectionStatus();
+                showError('Erro ao conectar com o banco de dados');
+            }
+        }
+
+        function showConnectionStatus() {
+            document.getElementById('connectionStatus').classList.remove('hidden');
+        }
+
+        function hideConnectionStatus() {
+            document.getElementById('connectionStatus').classList.add('hidden');
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-r-lg';
+            errorDiv.innerHTML = `<p><i class="fas fa-exclamation-triangle mr-2"></i>${message}</p>`;
+            document.querySelector('.container').insertBefore(errorDiv, document.querySelector('.container').firstChild);
+        }
+
+        async function loadBrothers() {
+            try {
+                const { data, error } = await supabase
+                    .from('irmaos')
+                    .select('*')
+                    .eq('disponivel', true)
+                    .order('nome');
+                
+                if (error) throw error;
+                brothers = data || [];
+                populateBrotherSelect();
+            } catch (error) {
+                console.error('Error loading brothers:', error);
+                brothers = [];
+            }
+        }
+
+        async function loadDesignations() {
+            try {
+                const { data, error } = await supabase
+                    .from('designacoes_final')
+                    .select(`
+                        *,
+                        irmaos (
+                            id,
+                            nome,
+                            telefone
+                        )
+                    `)
+                    .order('data', { ascending: true });
+                
+                if (error) throw error;
+                designations = data || [];
+                displayDesignations();
+            } catch (error) {
+                console.error('Error loading designations:', error);
+                designations = [];
+            }
+        }
+
+        function populateBrotherSelect() {
+            const select = document.getElementById('brotherSelect');
+            select.innerHTML = '<option value="">Selecione seu nome</option>';
+            
+            brothers.forEach(brother => {
+                const option = document.createElement('option');
+                option.value = brother.id;
+                option.textContent = brother.nome;
+                select.appendChild(option);
+            });
+        }
+
+        function populateMonthFilter() {
+            const months = [...new Set(designations.map(d => {
+                const date = (function(){const[year,month,day]=d.data.split('-');return new Date(year,month-1,day)})();
+                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            }))].sort();
+            
+            const select = document.getElementById('monthSelect');
+            select.innerHTML = '<option value="">Todos os Meses</option>';
+            
+            months.forEach(month => {
+                const [year, monthNum] = month.split('-');
+                const monthName = new Date(year, monthNum - 1).toLocaleDateString('pt-BR', {
+                    year: 'numeric',
+                    month: 'long'
+                });
+                const option = document.createElement('option');
+                option.value = month;
+                option.textContent = monthName;
+                select.appendChild(option);
+            });
+            
+            document.getElementById('monthFilter').classList.remove('hidden');
+        }
+
+        function loadSavedSettings() {
+            const savedBrotherId = localStorage.getItem('selectedBrotherId');
+            if (savedBrotherId) {
+                const checkBrothersLoaded = setInterval(() => {
+                    if (brothers.length > 0) {
+                        clearInterval(checkBrothersLoaded);
+                        const brotherSelect = document.getElementById('brotherSelect');
+                        brotherSelect.value = savedBrotherId;
+                        selectBrother(savedBrotherId);
+                    }
+                }, 100);
+            }
+            
+            const savedNotifications = localStorage.getItem('notificationsEnabled');
+            if (savedNotifications === 'true') {
+                const notificationToggle = document.getElementById('notificationToggle');
+                if (notificationToggle) {
+                    notificationToggle.checked = true;
+                    syncNotificationVisual();
+                }
+            }
+            
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                const icon = document.querySelector('#darkModeToggle i');
+                if (icon) icon.className = 'fas fa-sun';
+            }
+        }
+
+        function saveBrotherSelection(brotherId) {
+            if (brotherId) {
+                localStorage.setItem('selectedBrotherId', brotherId);
+            } else {
+                localStorage.removeItem('selectedBrotherId');
+            }
+        }
+
+        function saveNotificationSetting(enabled) {
+            localStorage.setItem('notificationsEnabled', enabled.toString());
+        }
+
+        function selectBrother(brotherId) {
+            currentBrotherId = brotherId;
+            showingAll = false;
+            saveBrotherSelection(brotherId);
+            displayDesignations();
+            updateStats();
+        }
+
+        function displayDesignations() {
+            const container = document.getElementById('designationsList');
+            const emptyState = document.getElementById('emptyState');
+            
+            let filteredDesignations = designations.filter(d => {
+    const today = new Date();
+    const [y, m, day] = d.data.split('-');
+    const dataObj = new Date(+y, +m - 1, +day);
+    return dataObj >= new Date(today.getFullYear(), today.getMonth(), today.getDate());
+});
+            
+            if (!showingAll && currentBrotherId) {
+                filteredDesignations = filteredDesignations.filter(d => d.irmao_id === currentBrotherId);
+            }
+            
+            if (currentFunction) {
+                filteredDesignations = filteredDesignations.filter(d => normalizeFunctionName(d.funcao) === currentFunction);
+            }
+            
+            if (currentMonth) {
+                filteredDesignations = filteredDesignations.filter(d => {
+                    const date = (function(){const[year,month,day]=d.data.split('-');return new Date(year,month-1,day)})();
+                    const designationMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    return designationMonth === currentMonth;
+                });
+            }
+
+            if (filteredDesignations.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            const groupedDesignations = {};
+            filteredDesignations.forEach(designation => {
+                const date = (function(){const[year,month,day]=designation.data.split('-');return new Date(year,month-1,day)})();
+                const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                if (!groupedDesignations[monthKey]) {
+                    groupedDesignations[monthKey] = [];
+                }
+                groupedDesignations[monthKey].push(designation);
+            });
+
+            container.innerHTML = '';
+            
+            Object.keys(groupedDesignations)
+                .sort((a, b) => new Date(a + '-01') - new Date(b + '-01'))
+                .forEach(month => {
+                    const monthSection = document.createElement('div');
+                    monthSection.className = 'mb-8 fade-in-up';
+                    
+                    const monthHeader = document.createElement('h3');
+                    monthHeader.className = 'month-title';
+                    const [year, monthNum] = month.split('-');
+                    monthHeader.textContent = new Date(year, monthNum - 1).toLocaleDateString('pt-BR', {
+                        year: 'numeric',
+                        month: 'long'
+                    });
+                    monthSection.appendChild(monthHeader);
+
+                    groupedDesignations[month].forEach(designation => {
+                        const card = createDesignationCard(designation);
+                        monthSection.appendChild(card);
+                    });
+
+                    container.appendChild(monthSection);
+                });
+        }
+
+        function createDesignationCard(designation) {
+            const card = document.createElement('div');
+            card.className = 'bg-white dark:bg-gray-800 designation-card p-5 mb-5';
+            
+            const date = (function(){const[year,month,day]=designation.data.split('-');return new Date(year,month-1,day)})();
+            const dayName = date.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const formattedDate = date.toLocaleDateString('pt-BR');
+            const functionIcon = getFunctionIcon(designation.funcao);
+            const brotherName = designation.irmaos ? designation.irmaos.nome : 'Nome não encontrado';
+
+            let dayBadgeClass = 'day-badge';
+            if (dayName.toLowerCase().includes('quinta')) {
+                dayBadgeClass = 'day-badge-quinta';
+            } else if (dayName.toLowerCase().includes('domingo')) {
+                dayBadgeClass = 'day-badge-domingo';
+            }
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <span class="date-badge">${formattedDate}</span>
+                    <span class="${dayBadgeClass}">${dayName.toUpperCase()}</span>
+                </div>
+                <div class="function-name text-gray-800 dark:text-white dark:text-white flex items-center gap-3 mb-3">
+                    <span class="text-2xl">${functionIcon}</span> ${designation.funcao}
+                </div>
+                ${showingAll ? `<div class="brother-name text-gray-600 dark:text-gray-300 dark:text-gray-200 dark:text-gray-300 dark:text-gray-200 flex items-center gap-3 mb-4"><span class="text-xl">👨🏽‍💼</span> ${brotherName}</div>` : ''}
+                <div class="flex justify-between mt-5">
+                    <div class="flex-1 flex justify-start">
+                        <button class="details-btn btn-details" data-function="${designation.funcao}">
+                            <i class="fas fa-info-circle mr-2"></i>Detalhes
+                        </button>
+                    </div>
+                    ${!showingAll ? `
+                    <div class="flex-1 flex justify-end">
+                        <button class="absence-btn btn-absence" data-designation='${JSON.stringify(designation)}'>
+                            <i class="fas fa-times mr-2"></i>Ausência
+                        </button>
+                    </div>` : ''}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function getFunctionIcon(functionName) {
+            if (functionIcons[functionName]) {
+                return functionIcons[functionName];
+            }
+            
+            for (const key in functionIcons) {
+                if (functionName.toLowerCase().includes(key.toLowerCase())) {
+                    return functionIcons[key];
+                }
+            }
+            
+            return functionIcons.default;
+        }
+
+        function updateStats() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+            let filteredDesignations = designations;
+            if (!showingAll && currentBrotherId) {
+                filteredDesignations = filteredDesignations.filter(d => d.irmao_id === currentBrotherId);
+            }
+
+            const thisMonthCount = filteredDesignations.filter(d => {
+                const designationDate = (function(){const[year,month,day]=d.data.split('-');return new Date(year,month-1,day)})();
+                return designationDate.getMonth() === currentMonth && designationDate.getFullYear() === currentYear;
+            }).length;
+
+            const nextWeekCount = filteredDesignations.filter(d => {
+                const designationDate = (function(){const[year,month,day]=d.data.split('-');return new Date(year,month-1,day)})();
+                return designationDate >= today && designationDate <= nextWeek;
+            }).length;
+
+            document.getElementById('totalDesignations').textContent = filteredDesignations.length;
+            document.getElementById('thisMonth').textContent = thisMonthCount;
+            document.getElementById('nextWeek').textContent = nextWeekCount;
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#darkModeToggle i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        function syncNotificationVisual() {
+            const hiddenSwitch = document.getElementById('notificationToggle');
+            const visualBtn = document.getElementById('toggleNotifications');
+            
+            if (!hiddenSwitch || !visualBtn) return;
+            
+            if (hiddenSwitch.checked) {
+                visualBtn.classList.remove('inactive-notifications');
+                visualBtn.classList.add('notification-toggle-btn');
+                visualBtn.innerHTML = '<i class="fas fa-bell"></i> Notificações Ativas';
+            } else {
+                visualBtn.classList.add('inactive-notifications');
+                visualBtn.classList.remove('notification-toggle-btn');
+                visualBtn.innerHTML = '<i class="fas fa-bell-slash"></i> Notificações Inativas';
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('brotherSelect').addEventListener('change', function() {
+                const brotherId = this.value;
+                if (brotherId) {
+                    selectBrother(brotherId);
+                }
+            });
+
+            document.getElementById('monthSelect').addEventListener('change', function() {
+                currentMonth = this.value;
+                displayDesignations();
+            });
+
+            
+document.getElementById('addCalendarButton').addEventListener('click', function () {
+    
+if (!currentBrotherId || !designations.length) {
+    const alertBox = document.getElementById("agendaAlert");
+alertBox.classList.remove("hidden");
+setTimeout(() => alertBox.classList.add("hidden"), 4000);
+    return;
+}
+
+
+    const brother = brothers.find(b => b.id === currentBrotherId);
+    if (!brother) return;
+
+    const hoje = new Date();
+    const futuras = designations.filter(d => {
+        if (d.irmao_id !== currentBrotherId) return false;
+        const data = new Date(d.data);
+        return data >= new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()); // ignorar horários
+    });
+
+    if (futuras.length === 0) {
+        alert("Você não tem designações futuras para adicionar à agenda.");
+        return;
+    }
+
+    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Congregação Veredas//Designações//PT-BR\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n";
+    futuras.forEach(d => {
+        const data = new Date(d.data);
+        const dia = data.getDay();
+        const hora = (dia === 3 || dia === 4) ? "20:00" : "18:30"; // Quarta (3), Quinta (4)
+
+        const dt = new Date(d.data + 'T' + hora);
+        const dtend = new Date(dt.getTime() + 45 * 60000);
+        const pad = n => String(n).padStart(2, '0');
+        const fmt = d => d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00';
+        const dtstart = fmt(dt);
+        const dtendstr = fmt(dtend);
+
+        // Lembrete às 13h
+        const lembrete = new Date(d.data + "T13:00:00");
+        const diffMin = Math.max(0, Math.floor((dt - lembrete) / 60000));
+
+        ics += "BEGIN:VEVENT\n";
+        ics += "UID:" + brother.nome.replace(/\s+/g, '') + "-" + dtstart + "@designacoes-veredas\n";
+        ics += "DTSTAMP:" + fmt(new Date()) + "Z\n";
+        ics += "DTSTART;TZID=America/Sao_Paulo:" + dtstart + "\n";
+        ics += "DTEND;TZID=America/Sao_Paulo:" + dtendstr + "\n";
+        ics += "SUMMARY:" + d.funcao + " – Congregação Veredas\n";
+        ics += "DESCRIPTION:Você, " + brother.nome + ", está designado como " + d.funcao + " no dia " + d.data.split("-").reverse().join("/") + ".\n";
+        ics += "LOCATION:Salão do Reino - Congregação Veredas\n";
+        ics += "STATUS:CONFIRMED\n";
+        ics += "BEGIN:VALARM\nTRIGGER:-PT" + diffMin + "M\nDESCRIPTION:Lembrete da sua designação: " + d.funcao + "\nACTION:DISPLAY\nEND:VALARM\n";
+        ics += "END:VEVENT\n";
+    });
+    ics += "END:VCALENDAR";
+
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = "designacoes-veredas.ics";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+document.getElementById('viewAllButton').addEventListener('click', function() {
+                showingAll = true;
+                currentBrotherId = null;
+                saveBrotherSelection(null);
+                document.getElementById('brotherSelect').value = '';
+                displayDesignations();
+                updateStats();
+            });
+
+            const darkToggleBtn = document.getElementById('darkModeToggle');
+if (darkToggleBtn) {
+    darkToggleBtn.addEventListener('click', toggleDarkMode);
+}
+
+            const hiddenSwitch = document.getElementById('notificationToggle');
+            const visualBtn = document.getElementById('toggleNotifications');
+            
+            if (hiddenSwitch && visualBtn) {
+                syncNotificationVisual();
+                
+                visualBtn.addEventListener('click', () => {
+                    hiddenSwitch.checked = !hiddenSwitch.checked;
+                    hiddenSwitch.dispatchEvent(new Event('change'));
+                    syncNotificationVisual();
+                    saveNotificationSetting(hiddenSwitch.checked);
+                });
+                
+                hiddenSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        requestNotificationPermission();
+                    }
+                    saveNotificationSetting(this.checked);
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.details-btn')) {
+                    const functionName = e.target.closest('.details-btn').dataset.function;
+                    showDetailsModal(functionName);
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.absence-btn')) {
+                    const designationData = JSON.parse(e.target.closest('.absence-btn').dataset.designation);
+                    showAbsenceModal(designationData);
+                }
+            });
+
+            document.getElementById('closeModal').addEventListener('click', closeDetailsModal);
+            document.getElementById('closeAbsenceModal').addEventListener('click', closeAbsenceModal);
+
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.absence-template')) {
+                    const templateType = e.target.closest('.absence-template').dataset.type;
+                    selectAbsenceTemplate(templateType);
+                }
+            });
+
+            document.getElementById('sendWhatsApp').addEventListener('click', sendWhatsAppMessage);
+            document.getElementById('cancelAbsence').addEventListener('click', closeAbsenceModal);
+
+            document.getElementById('customMessage').addEventListener('input', function() {
+                updatePreview(this.value);
+            });
+        }
+
+        function showDetailsModal(functionName) {
+            const normalizedName = normalizeFunctionName(functionName);
+            const modal = document.getElementById('detailsModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalFunctionName = document.getElementById('modalFunctionName');
+            const modalContent = document.getElementById('modalContent');
+            const details = functionDetails[normalizedName] || functionDetails['Indicador'];
+            
+            modalIcon.textContent = details.icon;
+            modalFunctionName.textContent = normalizedName;
+            
+            modalContent.innerHTML = '';
+            details.sections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'mb-6';
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'font-semibold text-blue-600 mb-3 text-lg';
+                titleDiv.textContent = section.title;
+                sectionDiv.appendChild(titleDiv);
+                
+                const listDiv = document.createElement('ul');
+                listDiv.className = 'space-y-2 text-gray-700 dark:text-gray-200 dark:text-gray-100';
+                
+                section.items.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'flex items-start';
+                    listItem.innerHTML = `<span class="mr-3 text-blue-500 font-bold">•</span><span>${item}</span>`;
+                    listDiv.appendChild(listItem);
+                });
+                
+                sectionDiv.appendChild(listDiv);
+                modalContent.appendChild(sectionDiv);
+            });
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').classList.add('hidden');
+        }
+
+        function showAbsenceModal(designation) {
+            currentDesignationForAbsence = designation;
+            document.getElementById('absenceModal').classList.remove('hidden');
+            
+            document.querySelectorAll('.absence-template').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-50', 'border-red-500', 'bg-red-50', 'border-yellow-500', 'bg-yellow-50', 'border-purple-500', 'bg-purple-50');
+                btn.classList.add('border-gray-200'); btn.classList.add('dark:border-gray-600');
+            });
+            
+            document.getElementById('messagePreview').textContent = 'Selecione um modelo acima';
+            document.getElementById('customMessage').value = '';
+        }
+
+        function closeAbsenceModal() {
+            document.getElementById('absenceModal').classList.add('hidden');
+            currentDesignationForAbsence = null;
+        }
+
+        function selectAbsenceTemplate(templateType) {
+            document.querySelectorAll('.absence-template').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-50', 'border-red-500', 'bg-red-50', 'border-yellow-500', 'bg-yellow-50', 'border-purple-500', 'bg-purple-50');
+                btn.classList.add('border-gray-200'); btn.classList.add('dark:border-gray-600');
+            });
+            
+            const selectedButton = document.querySelector(`[data-type="${templateType}"]`);
+            if (templateType === 'emergencia') {
+                selectedButton.classList.add('border-red-500', 'bg-red-50');
+            } else if (templateType === 'doenca') {
+                selectedButton.classList.add('border-yellow-500', 'bg-yellow-50');
+            } else if (templateType === 'viagem') {
+                selectedButton.classList.add('border-blue-500', 'bg-blue-50');
+            } else if (templateType === 'personalizada') {
+                selectedButton.classList.add('border-purple-500', 'bg-purple-50');
+            } else {
+                selectedButton.classList.add('border-blue-500', 'bg-blue-50');
+            }
+
+            if (templateType === 'personalizada') {
+                document.getElementById('customMessage').value = '';
+                updatePreview('Digite sua mensagem personalizada...');
+                document.getElementById('customMessage').focus();
+            } else {
+                const template = messageTemplates[templateType];
+                const message = template.text
+                    .replace('{funcao}', currentDesignationForAbsence.funcao)
+                    .replace('{data}', formatLocalDate(currentDesignationForAbsence.data));
+                
+                document.getElementById('customMessage').value = message;
+                updatePreview(message);
+            }
+        }
+
+        function updatePreview(message) {
+            document.getElementById('messagePreview').textContent = message;
+        }
+
+        function sendWhatsAppMessage() {
+            const message = document.getElementById('customMessage').value.trim();
+            if (!message) {
+                alert('Por favor, digite uma mensagem');
+                return;
+            }
+            
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+            closeAbsenceModal();
+        }
+
+        function normalizeFunctionName(func) {
+            const f = func.toLowerCase();
+            if (f.includes('microfone')) return 'Microfone';
+            if (f.includes('indicador')) return 'Indicador';
+            if (f.includes('operador') && f.includes('ajudante')) return 'Ajudante do Operador';
+            if (f.includes('operador')) return 'Operador de Som';
+            if (f.includes('sentinela')) return 'Leitor de Sentinela';
+            if (f.includes('estudo')) return 'Leitor Estudo Bíblico';
+            return func;
+        }
+
+        function populateFunctionFilter() {
+            const select = document.getElementById('functionSelect');
+            if (!select) return;
+            
+            const set = new Set();
+            designations.forEach(d => set.add(normalizeFunctionName(d.funcao)));
+            select.innerHTML = '<option value="">Todas as Funções</option>';
+            
+            [...set].sort().forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f;
+                opt.textContent = f;
+                select.appendChild(opt);
+            });
+            
+            select.addEventListener('change', () => {
+                currentFunction = select.value;
+                displayDesignations();
+            });
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
+        }
+    </script>
+<script>
+        document.querySelectorAll('.absence-template').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.motivos-escolha').forEach(el => el.classList.add('hidden'));
+                document.getElementById('trocarMotivoWrapper').classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('trocarMotivo').addEventListener('click', () => {
+            document.querySelectorAll('.motivos-escolha').forEach(el => el.classList.remove('hidden'));
+            document.getElementById('trocarMotivoWrapper').classList.add('hidden');
+        });
+    </script>
+<script>
+        document.getElementById('detailsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailsModal();
+            }
+        });
+        document.getElementById('bottomCloseModal').addEventListener('click', closeDetailsModal);
+    </script>
+<!-- OneSignal Web Push -->
+<script>
+  window.OneSignal = window.OneSignal || [];
+  if (!window.OneSignalInitialized) {
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "866e424c-6172-40e0-9cba-fcfe75402d9a",
+        allowLocalhostAsSecureOrigin: true,
+        notifyButton: { enable: false }
+      });
+
+      OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+        console.log("Notificações ativadas?", isEnabled);
+        if (!isEnabled) {
+          OneSignal.showSlidedownPrompt();
+        }
+      });
+    });
+    window.OneSignalInitialized = true;
+  }
+</script><script>
+function enviarNotificacaoTeste() {
+  OneSignal.push(function() {
+    OneSignal.sendSelfNotification(
+      "📢 Teste de Notificação",
+      "Esta é uma notificação de teste enviada localmente.",
+      'https://designacoes.netlify.app', // URL ao clicar
+      'https://cdn-icons-png.flaticon.com/512/1827/1827392.png', // ícone
+      {
+        notificationType: 'self-test'
+      }
+    );
+  });
+}
+</script>
+<!-- Alerta de aviso bonito -->
+<!-- Alerta de aviso estilizado -->
+<!-- Alerta de aviso estilizado central -->
+<div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-xl bg-yellow-100 text-yellow-900 font-semibold text-center px-8 py-5 rounded-2xl shadow-2xl border border-yellow-300 z-50 hidden transition-all duration-300" id="agendaAlert">
+<div class="text-4xl mb-2">⚠️</div>
+<div class="text-base sm:text-lg leading-snug">Por favor, selecione seu nome primeiro para gerar sua agenda.</div>
+</div></body>
+</html>

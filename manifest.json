@@ -1,0 +1,32 @@
+{
+  "id": "com.jardimveredas.designacoes",
+  "name": "Designações – Congregação Jd. Veredas",
+  "short_name": "Designações",
+  "description": "Aplicativo para visualizar e receber notificações de designações.",
+  "start_url": "/mobile.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "gcm_sender_id": "108611373579"
+}
